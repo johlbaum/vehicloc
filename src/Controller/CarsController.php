@@ -11,23 +11,34 @@ use App\Entity\Car;
 use App\Form\CarType;
 use Doctrine\ORM\EntityManagerInterface;
 
-
 class CarsController extends AbstractController
 {
+    public function __construct(
+        private CarRepository $carRepository,
+        private EntityManagerInterface $entityManager
+    ) {
+    }
+
+    /**
+     * Page d'accueil avec la liste des voitures.
+     */
     #[Route('/', name: 'app_home', methods: ['GET'])]
-    public function index(CarRepository $repository): Response
+    public function index(): Response
     {
-        $cars = $repository->findAll();
+        $cars = $this->carRepository->findAll();
 
         return $this->render('main/index.html.twig', [
             'cars' => $cars
         ]);
     }
 
+    /**
+     * Page de détail d'une voiture
+     */
     #[Route('/voiture/{id}', name: 'app_car', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function show(int $id, CarRepository $repository): Response
+    public function show(int $id): Response
     {
-        $car = $repository->find($id);
+        $car = $this->carRepository->find($id);
 
         if (!$car) {
             return $this->redirectToRoute('app_home');
@@ -38,18 +49,22 @@ class CarsController extends AbstractController
         ]);
     }
 
-    #[Route('/voiture/ajouter', name: 'app_add', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $manager): Response
+    /**
+     * Création d'une voiture
+     */
+    #[Route('/voiture/ajouter', name: 'app_car_add', methods: ['GET', 'POST'])]
+    public function new(Request $request): Response
     {
         $car = new Car();
+
         $form = $this->createForm(CarType::class, $car);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $car = $form->getData();
 
-            $manager->persist($car);
-            $manager->flush();
+            $this->entityManager->persist($car);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('app_car', ['id' => $car->getId()]);
         }
@@ -57,5 +72,23 @@ class CarsController extends AbstractController
         return $this->render('car/new.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    /**
+     * Suppression d'une voiture
+     */
+    #[Route('/voiture/{id}/supprimer', name: 'app_car_delete', methods: ['POST'])]
+    public function delete(int $id): Response
+    {
+        $car = $this->carRepository->find($id);
+
+        if (!$car) {
+            return $this->redirectToRoute('app_home');
+        }
+
+        $this->entityManager->remove($car);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('app_home');
     }
 }
