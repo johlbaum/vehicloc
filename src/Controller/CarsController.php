@@ -77,7 +77,7 @@ class CarsController extends AbstractController
     /**
      * Suppression d'une voiture
      */
-    #[Route('/voiture/{id}/supprimer', name: 'app_car_delete', methods: ['POST'])]
+    #[Route('/voiture/{id}/supprimer', name: 'app_car_delete', methods: ['POST', 'GET'])]
     public function delete(int $id): Response
     {
         $car = $this->carRepository->find($id);
