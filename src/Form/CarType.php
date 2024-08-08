@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 
@@ -21,12 +22,14 @@ class CarType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nom de la voiture'
             ])
-            ->add('description', TextType::class)
+            ->add('description', TextareaType::class)
             ->add('monthlyPrice', NumberType::class, [
-                'label' => 'Prix mensuel'
+                'label' => 'Prix mensuel',
+                'html5' => true,
             ])
             ->add('dailyPrice', NumberType::class, [
-                'label' => 'Prix journalier'
+                'label' => 'Prix journalier',
+                'html5' => true,
             ])
             ->add('numberOfSeats', EnumType::class, [
                 'class' => NumberOfSeats::class,
