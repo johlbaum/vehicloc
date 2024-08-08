@@ -3,8 +3,6 @@
 namespace App\Factory;
 
 use App\Entity\Car;
-use App\Enum\GearBox;
-use App\Enum\NumberOfSeats;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
