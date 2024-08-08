@@ -16,8 +16,7 @@ class CarsController extends AbstractController
     public function __construct(
         private CarRepository $carRepository,
         private EntityManagerInterface $entityManager
-    ) {
-    }
+    ) {}
 
     /**
      * Page d'accueil avec la liste des voitures.
@@ -41,7 +40,7 @@ class CarsController extends AbstractController
         $car = $this->carRepository->find($id);
 
         if (!$car) {
-            return $this->redirectToRoute('app_home');
+            throw $this->createNotFoundException('La voiture demandée n\'existe pas.');
         }
 
         return $this->render('car/show.html.twig', [
@@ -83,7 +82,7 @@ class CarsController extends AbstractController
         $car = $this->carRepository->find($id);
 
         if (!$car) {
-            return $this->redirectToRoute('app_home');
+            throw $this->createNotFoundException('La voiture à supprimer n\'existe pas.');
         }
 
         $this->entityManager->remove($car);
